@@ -1,19 +1,24 @@
 const dotenv = require('dotenv');
 const express = require('express');
 const morgan = require('morgan');
-const libro = require('./rutas/libro');
 const connectDatabase = require("./config/db")
 
 dotenv.config({ path: './config/config.env' });
 connectDatabase();
 
+const libro = require('./rutas/libro');
+const autor = require('./rutas/autor');
+
 const app = express();
+app.use(express.json());
+
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
 
 app.use('/api/Libro', libro);
+app.use('/api/LibreriaAutor', autor);
 
 const PORT = process.env.PORT || 5000;
 
