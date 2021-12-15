@@ -2,11 +2,13 @@ const dotenv = require('dotenv');
 const express = require('express');
 const morgan = require('morgan');
 const libro = require('./rutas/libro');
+const connectDatabase = require("./config/db")
 
-dotenv.config({path:'./config/config.env'});
+dotenv.config({ path: './config/config.env' });
+connectDatabase();
 
 const app = express();
-if(process.env.NODE_ENV === 'development'){
+if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
@@ -15,4 +17,8 @@ app.use('/api/Libro', libro);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, console.log("Servidor se ejecuta en ambiente", process.env.NODE_ENV));
+const server = app.listen(PORT, console.log("Servidor se ejecuta en ambiente", process.env.NODE_ENV));
+process.on('unhandledRejection', (err, promise) => {
+    console.log('Errores', err.message);
+    server.close(() => process.exit(1));
+});
