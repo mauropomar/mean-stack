@@ -1,3 +1,4 @@
+const ErrorResponse = require('./../helper/errorResponse');
 const Autor = require('../models/Autor');
 
 exports.crearAutor = async (req, res, next) => {
@@ -8,10 +9,7 @@ exports.crearAutor = async (req, res, next) => {
             data: autorData
         });
     } catch (error) {
-        res.status(400).json({
-            status: 400,
-            message: error.message
-        });
+        next(new ErrorResponse('No es posible crear un autor '+error.message, 404));
     }
 }
 
@@ -20,22 +18,19 @@ exports.getAutor = async (req, res, next) => {
         const autorLista = await Autor.find();
         res.status(200).json(autorLista);
     } catch (error) {
-        res.status(400).json({
-            status: 400,
-            message: error.message
-        });
+        next(new ErrorResponse('No es posible procesa la respuesta '+error.message, 404));
     }
 }
 
 exports.getAutorById = async (req, res, next) => {
     try {
         const autor = await Autor.findById(req.params.id);
+        if(!autor){
+           return next(new ErrorResponse('El autor no existe con este id '+req.params.id, 404));  
+        }
         res.status(200).json(autor);
     } catch (error) {
-        res.status(400).json({
-            status: 400,
-            message: error.message
-        });
+        next(new ErrorResponse('El autor no existe con este id '+req.params.id, 404));
     }
 }
 
@@ -43,11 +38,11 @@ exports.updateAutor = async (req, res, next) => {
     try {
         const autor = await Autor.findByIdAndUpdate(req.params.id, req.body);
         if (!autor) {
-            return res.status(400).json({ status: 400});
+            return next(new ErrorResponse('El autor no existe con este id '+req.params.id, 404));  
         }
         res.status(200).json({ status: 200, data: autor });
     } catch (error) {
-        res.status(400).json({ status: 200, mensaje: error.message });
+        next(new ErrorResponse('Ha ocurrido un error al actualizar el autor '+error.message, 404));  
     }
 }
 
@@ -55,10 +50,10 @@ exports.deleteAutor = async (req, res, next) => {
     try {
         const autor = await Autor.findByIdAndDelete(req.params.id);
         if (!autor) {
-            return res.status(400).json({ status: 200});
+            return next(new ErrorResponse('El autor no existe con este id '+req.params.id, 404));  
         }
         res.status(200).json({ status: 200});
     } catch (error) {
-        res.status(400).json({ status: 200, mensaje: error.message });
+        next(new ErrorResponse('Ha ocurrido un error al eliminar el autor '+error.message, 404));  
     }
 }
