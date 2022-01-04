@@ -1,6 +1,7 @@
 const dotenv = require('dotenv');
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 const errorHandler = require('./middleware/error')
 const connectDatabase = require('./config/db')
 
@@ -9,9 +10,11 @@ connectDatabase();
 
 const libro = require('./rutas/libro');
 const autor = require('./rutas/autor');
+const usuario = require('./rutas/usuario');
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
@@ -20,6 +23,7 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use('/api/Libro', libro);
 app.use('/api/LibreriaAutor', autor);
+app.use('/usuario', usuario);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;

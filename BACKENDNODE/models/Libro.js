@@ -9,9 +9,7 @@ const LibroSchema = new mongoose.Schema({
     descripcion: String,
     precio: String,
     fechaPublicacion: Date,
-    autor: {
-        id: String, nombreCompleto: String
-    }
+    autor: {id: String, nombreCompleto: String}
 });
 
 module.exports = mongoose.model('Libro', LibroSchema);
